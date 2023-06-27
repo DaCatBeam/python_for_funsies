@@ -1,4 +1,7 @@
 import click
+import sys
+
+JPG_END = bytes([0xFF, 0xD9]) 
 
 @click.group()
 def cli():
@@ -15,5 +18,12 @@ def cli():
      default='injected_image.jpg',
      help='The input image to inject.'
 )
+
 def create(image_file, out_file):
-     pass
+     try:
+          with open(image_file, "rb") as image:
+               file_bytes = bytearray(image.read())
+               end_index = file_bytes.find(JPG_END)
+     except FileNotFoundError:
+          sys.stderr.write(f"Could not open image file, {image_file}.")
+          sys.exit(1)
